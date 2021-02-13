@@ -12,6 +12,7 @@
 #include <random>
 std::vector<int> numberList; // Structure holding all the numbers in the file
 using namespace std;
+
 /**
  * Prints the contents of numberList
  */
@@ -20,28 +21,41 @@ void print() {
     cout << i << " ";
   }
 }
+
 /**
  * Iterates through the numberList
  * @return the smallest number
  */
-int min() {
+void min() {
   int smallest = INT_MAX;
+  int count = 0;
   for (int &i : numberList) {
-    if(i < smallest) {smallest = i;}
+    if(i < smallest) {
+      smallest = i;
+      count++;
+    }
   }
-  return smallest;
+  cout << "The smallest number is " << smallest << " and it took " << count << " iterations to "
+                                                                               "find it" << endl;
 }
+
 /**
  *  Iterates through numberList
  * @return the largest number
  */
-int max() {
+void max() {
   int largest = 0;
+  int count = 0;
   for (int &i : numberList) {
-    if(i > largest) {largest = i;}
+    if(i > largest) {
+      largest = i;
+      count++;
+    }
   }
-  return largest;
+  cout << "The largest number is " << largest << " and it took " << count << " iterations to "
+                                                                             "find it" << endl;
 }
+
 /**
  * Generate 50 random numbers and replaces whatever was in the file with the new contents
  * @param fileName
@@ -64,11 +78,12 @@ void random(string fileName) {
   myFile.close();
 
 }
+
 /**
  * Read the contents of the file
  * @param fileName
  */
-void readFile(const string& fileName){
+void readFile(const string &fileName) {
   ifstream myFile;
   string test;
   myFile.open(fileName);
@@ -102,13 +117,14 @@ int main() {
     switch (choice) {
       case 1: print();
         break;
-      case 2: cout << min();
+      case 2: min();
         break;
-      case 3: cout << max();
+      case 3: max();
         break;
       case 4: random(fileName);
         break;
       default: switchStop = false;
+        exit(EXIT_SUCCESS);
         break;
     }
     cout << "\nEnter a new number" << endl;
