@@ -23,38 +23,38 @@ void print() {
 }
 
 /**
- * Iterates through the numberList
- * @return the smallest number
+ * Iterates through the numberList and prints the smallest number and its location in the vector
+ * in a recursive manner
  */
-void min() {
-  int smallest = INT_MAX;
-  int count = 0;
-  for (int &i : numberList) {
-    if(i < smallest) {
-      smallest = i;
-      count++;
-    }
+void min(int smallestN, int position, int smallestNLocation) {
+  if(position == numberList.size()){
+    cout <<"After going through " << position <<" iterations, the largest number is " << smallestN <<
+         " at position " << smallestNLocation << endl;
+    return;
+  }else if(numberList[position] < smallestN){
+    smallestNLocation = position + 1;
+    smallestN = numberList[position];
   }
-  cout << "The smallest number is " << smallest << " and it took " << count << " iterations to "
-                                                                               "find it" << endl;
+  return min(smallestN, ++position, smallestNLocation);
 }
 
 /**
- *  Iterates through numberList
- * @return the largest number
+ * Iterates through the numberList and prints the largest number and its location in the vector
+ * in a recursive manner
  */
-void max() {
-  int largest = 0;
-  int count = 0;
-  for (int &i : numberList) {
-    if(i > largest) {
-      largest = i;
-      count++;
+void max(int largestN, int position, int largestNLocation) {
+  if(position == numberList.size()){
+    cout <<"After going through " << position <<" iterations, the largest number is " << largestN <<
+    " at position " << largestNLocation << endl;
+    return;
+  }else if(numberList[position] > largestN){
+      largestNLocation = position + 1;
+      largestN = numberList[position];
     }
+    return max(largestN, ++position, largestNLocation);
   }
-  cout << "The largest number is " << largest << " and it took " << count << " iterations to "
-                                                                             "find it" << endl;
-}
+
+
 
 /**
  * Generate 50 random numbers and replaces whatever was in the file with the new contents
@@ -89,7 +89,7 @@ void readFile(const string &fileName) {
   myFile.open(fileName);
   if(!myFile.is_open()) {
     cout << "Could not open file " + fileName << endl;
-    exit(EXIT_FAILURE);
+    return;
   }
   while (getline(myFile, test, ' ')) {
     numberList.push_back(stoi(test));
@@ -104,22 +104,25 @@ int main() {
   cout << "What is the file name? \n";
   cin >> fileName;
   readFile(fileName);
+  if(numberList.empty()){
+    return 1;
+  }
   cout
       << "Welcome\nEnter 1 to see items in file\nEnter 2 to find the smallest number\n"
          "Enter 3 to find the largest number\nEnter 4 to generate 50 random integers\n"
          "Enter any other number to exit\n";
   cin >> choice;
 /*
- * TODO: figure out what he wants for intervals. Is it runtime or is it the N time it runs in?
+ * TA stated interval means the position of the max or min
  */
   bool switchStop = true;
   while (switchStop) {
     switch (choice) {
       case 1: print();
         break;
-      case 2: min();
+      case 2:min(INT8_MAX,0,0);
         break;
-      case 3: max();
+      case 3:max(0,0,0);
         break;
       case 4: random(fileName);
         break;
@@ -127,7 +130,7 @@ int main() {
         exit(EXIT_SUCCESS);
         break;
     }
-    cout << "\nEnter a new number" << endl;
+    cout << "\nEnter a new command" << endl;
     cin >> choice;
   }
 }
