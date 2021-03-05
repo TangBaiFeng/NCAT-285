@@ -4,7 +4,8 @@
 * 2/5/2021
 * Prompts the user for a data file and then displays a
 * menu that gives the user the options to either seed the file, find the largest or smallest, or
-* display the contents of the file
+* display the contents of the file. The numbers stored will be sorted smallest -> largest using
+ * radix sorting
 */
 #include "fstream"
 #include "iostream"
@@ -22,50 +23,57 @@ void print() {
   }
 }
 
-int helper(int a, int b){
-  int c =0;
-  int d = b;
-  while (b<a){
-    c=c+1;
-    b=b+d:
-  }
-  a=c;
-  return a;
-}
-
-/**
- * Iterates through the numberList and prints the smallest number and its location in the vector
- * in a recursive manner
+/*
+ * Sorts the numberList using the Radix sorting algorithm.
  */
-void min(int smallestN, int position, int smallestNLocation) {
-  if(position == numberList.size()){
-    cout <<"After going through " << position <<" iterations, the largest number is " << smallestN <<
-         " at position " << smallestNLocation << endl;
-    return;
-  }else if(numberList[position] < smallestN){
-    smallestNLocation = position + 1;
-    smallestN = numberList[position];
-  }
-  return min(smallestN, ++position, smallestNLocation);
-}
+void radixSort() {
+  int largestN = 0;
 
-/**
- * Iterates through the numberList and prints the largest number and its location in the vector
- * in a recursive manner
- */
-void max(int largestN, int position, int largestNLocation) {
-  if(position == numberList.size()){
-    cout <<"After going through " << position <<" iterations, the largest number is " << largestN <<
-    " at position " << largestNLocation << endl;
-    return;
-  }else if(numberList[position] > largestN){
-      largestNLocation = position + 1;
-      largestN = numberList[position];
+  //Find the largest number
+  for (int i:numberList) {
+    largestN = max(i, largestN);
+  }
+  int maxDigits = to_string(largestN).size();
+  // Create an array with 10 'buckets' (Each bucket is a vector)
+  vector<int> buckets[10];
+  int pow10 = 1;
+  int bucketIndex;
+  int arrayIndex;
+  // Loop repeats the size of the largest numbers place value
+  for (int digitIndex = 0; digitIndex < maxDigits; digitIndex++) {
+    for (int i = 0; i < numberList.size(); i++) {
+      // Puts the number in the bucket matching the current iterations place value
+      bucketIndex = abs(numberList[i] / pow10) % 10;
+      buckets[bucketIndex].push_back(numberList[i]);
     }
-    return max(largestN, ++position, largestNLocation);
+    arrayIndex = 0;
+    for (int i = 0; i < 10; i++) {
+      for (int j = 0; j < buckets[i].size(); j++) {
+        numberList[arrayIndex++] = buckets[i][j]; // Place back in vector
+      }
+      buckets[i].clear();
+    }
+    pow10 *= 10; // Move to next place value
   }
 
+}
 
+/**
+ * Returns the number at the beginning of the sorted vector (the min)
+ */
+void min() {
+  cout << "After going through " << 0 << " iterations, the smallest number is " << numberList[0] <<
+       " at position " << 0 << endl;
+}
+
+/**
+ * Returns the number at the end of the sorted vector (the max)
+ */
+void max() {
+  cout << "After going through " << 0 << " iterations, the largest number is " <<
+       numberList[numberList.size() - 1] <<
+       " at position " << numberList.size() << endl;
+}
 
 /**
  * Generate 50 random numbers and replaces whatever was in the file with the new contents
@@ -81,7 +89,6 @@ void random(string fileName) {
   for (int i = 0; i < 50; ++i) {
     numberList.push_back(distribution(gen));
   }
-
   myFile.open(fileName);
   for (int i : numberList) {
     myFile << i << " ";
@@ -115,13 +122,14 @@ int main() {
   cout << "What is the file name? \n";
   cin >> fileName;
   readFile(fileName);
-  if(numberList.empty()){
+  if(numberList.empty()) {
     return 1;
   }
   cout
       << "Welcome\nEnter 1 to see items in file\nEnter 2 to find the smallest number\n"
          "Enter 3 to find the largest number\nEnter 4 to generate 50 random integers\n"
-         "Enter any other number to exit\n";
+         "Enter 5 to sort the array using Radix Sorting Algorithm\nEnter any other number to "
+         "exit\n";
   cin >> choice;
 /*
  * TA stated interval means the position of the max or min
@@ -131,15 +139,16 @@ int main() {
     switch (choice) {
       case 1: print();
         break;
-      case 2:min(INT8_MAX,0,0);
+      case 2:min();
         break;
-      case 3:max(0,0,0);
+      case 3:max();
         break;
       case 4: random(fileName);
         break;
+      case 5: radixSort();
+        break;
       default: switchStop = false;
         exit(EXIT_SUCCESS);
-        break;
     }
     cout << "\nEnter a new command" << endl;
     cin >> choice;

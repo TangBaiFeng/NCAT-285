@@ -4,4 +4,4 @@ project(NCAT_285)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(NCAT_285
-        "Lab 1/2.cpp")
+        "Lab 1/3.cpp")
