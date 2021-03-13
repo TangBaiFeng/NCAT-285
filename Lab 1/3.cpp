@@ -135,17 +135,31 @@ int main() {
  * TA stated interval means the position of the max or min
  */
   bool switchStop = true;
+  bool sortedFlag = false;
   while (switchStop) {
     switch (choice) {
       case 1: print();
         break;
-      case 2:min();
+      case 2:
+        if(!sortedFlag){
+          radixSort();
+          sortedFlag = true;
+        }
+        min();
         break;
-      case 3:max();
+      case 3:
+        if(!sortedFlag){
+          radixSort();
+          sortedFlag = true;
+        }
+        max();
         break;
-      case 4: random(fileName);
+      case 4:
+        random(fileName);
+        sortedFlag = false;
         break;
       case 5: radixSort();
+        sortedFlag = true;
         break;
       default: switchStop = false;
         exit(EXIT_SUCCESS);
